@@ -276,7 +276,7 @@ MonoBehaviour:
   m_ShowCameraFrustum: 1
   m_IgnoreTimeScale: 0
   m_WorldUpOverride: {fileID: 0}
-  m_UpdateMethod: 0
+  m_UpdateMethod: 1
   m_BlendUpdateMethod: 1
   m_DefaultBlend:
     m_Style: 1
@@ -924,14 +924,11 @@ MonoBehaviour:
   _moveParams:
     MoveSpeed: 10
     LimitSloapAngle: 50
-    EnableAntiProcess: 1
   _dashParams:
     MoveSpeed: 30
     LimitSloapAngle: 50
-    EnableAntiProcess: 1
   _dashTime: 1
   _inputThreshold: 0.125
-  _debugMode: 0
 --- !u!114 &1577710386
 MonoBehaviour:
   m_ObjectHideFlags: 0

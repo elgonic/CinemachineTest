@@ -21,8 +21,10 @@ public class Player : MonoBehaviour
     [SerializeField] private bool IsLockon;
 
     [Header("Move")]
-    [SerializeField] private RigidVelocityImpulseMove.Params _moveParams;
-    [SerializeField] private RigidVelocityImpulseMove.Params _dashParams;
+    [SerializeField] private TransformMove.Params _moveParams;
+    [SerializeField] private TransformMove.Params _dashParams;
+    //[SerializeField] private RigidVelocityImpulseMove.Params _moveParams;
+    //[SerializeField] private RigidVelocityImpulseMove.Params _dashParams;
     [SerializeField] private float _dashTime;
 
     [Header("入力ドリフト対処用バッファー")]
@@ -50,14 +52,22 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        _nomalMove = new RigidVelocityImpulseMove(_moveParams , _rb );
-        _dashMove = new RigidVelocityImpulseMove(_dashParams , _rb );
+        //_nomalMove = new RigidVelocityImpulseMove(_moveParams , _rb );
+        //_dashMove = new RigidVelocityImpulseMove(_dashParams , _rb );
+        _nomalMove = new TransformMove(_moveParams , transform );
+        _dashMove = new TransformMove(_dashParams , transform );
      }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if(_isDash) Dash();
         else Move();
+    }
+
+    private void FixedUpdate()
+    {
+     //   if(_isDash) Dash();
+     //   else Move();
     }
 
     private void OnEnable()

@@ -6,32 +6,26 @@ using UnityEngine;
 /// <summary>
 /// 設定速度に瞬間的に加速する
 /// </summary>
-public class RigidVelocityImpulseMove : IMove
+public class TransformMove : IMove
 {
-    private Rigidbody _rb;
+    private Transform _transform;
     private Params _params;
 
     private Vector2 _moveValue;
-    public  RigidVelocityImpulseMove( Params moveParams , Rigidbody rb)
+    public  TransformMove( Params moveParams , Transform tr)
     {
-        _rb = rb;
+        _transform = tr;
         _params = moveParams;
     }
 
     public void  Move(Vector2 moveDirection)
     {
         if (moveDirection == Vector2.zero) return;
-        _moveValue = moveDirection * _params.MoveSpeed;
-
-
-        Vector3 velocity = new  Vector3(_moveValue.x, _rb.velocity.y, _moveValue.y);
-
-       _rb.velocity = velocity;
+        _transform.position +=  new  Vector3(moveDirection.x, 0, moveDirection.y).normalized * _params.MoveSpeed * Time.deltaTime;
     }
 
     public void Stop()
     {
-        _rb.velocity = new Vector3(0, _rb.velocity.y, 0);
     }
 
     [Serializable]
