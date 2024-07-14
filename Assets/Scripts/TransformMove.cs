@@ -11,7 +11,6 @@ public class TransformMove : IMove
     private Transform _transform;
     private Params _params;
 
-    private Vector2 _moveValue;
     public  TransformMove( Params moveParams , Transform tr)
     {
         _transform = tr;
@@ -32,6 +31,5 @@ public class TransformMove : IMove
     public class Params
     {
         public float MoveSpeed = 5f;
-        public float LimitSloapAngle = 50f;
     }
 }

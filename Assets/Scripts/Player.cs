@@ -18,20 +18,29 @@ public class Player : MonoBehaviour
     [Header("Camera関係")]
     [SerializeField] private Camera _playerCamera;
     [SerializeField] private GameObject _lockonTargetObj;
-    [SerializeField] private bool IsLockon;
 
     [Header("Move")]
-    [SerializeField] private TransformMove.Params _moveParams;
-    [SerializeField] private TransformMove.Params _dashParams;
-    //[SerializeField] private RigidVelocityImpulseMove.Params _moveParams;
-    //[SerializeField] private RigidVelocityImpulseMove.Params _dashParams;
+    [SerializeField] private bool _isFixedUpdate = false;
+    [SerializeField] private MoveMode _moveMode;
+    [SerializeField] private TransformMove.Params _moveTrParams;
+    [SerializeField] private TransformMove.Params _dashTrParams;
+    [SerializeField] private RigidVelocityImpulseMove.Params _moveRbParams;
+    [SerializeField] private RigidVelocityImpulseMove.Params _dashRbParams;
     [SerializeField] private float _dashTime;
 
     [Header("入力ドリフト対処用バッファー")]
     [SerializeField] private float _inputThreshold = 0.125f;
 
-    private IMove _nomalMove;
-    private IMove _dashMove;
+
+    public enum MoveMode {
+        Transform,
+        Rigidbody
+    }
+
+    public Dictionary<MoveMode, IMove> _moveDic = new();
+    public Dictionary<MoveMode, IMove> _dashDic = new();
+
+
 
     private float _inputThreshold_SqrMag;
 
@@ -46,28 +55,31 @@ public class Player : MonoBehaviour
         _inputThreshold_SqrMag = _inputThreshold * _inputThreshold;
         _playerInput = GetComponent<PlayerInput>();
         _rb = GetComponent<Rigidbody>();
-
+        
 
     }
 
     private void Start()
     {
-        //_nomalMove = new RigidVelocityImpulseMove(_moveParams , _rb );
-        //_dashMove = new RigidVelocityImpulseMove(_dashParams , _rb );
-        _nomalMove = new TransformMove(_moveParams , transform );
-        _dashMove = new TransformMove(_dashParams , transform );
+        _moveDic.Add(MoveMode.Transform, new TransformMove(_moveTrParams, transform));
+        _moveDic.Add(MoveMode.Rigidbody, new RigidVelocityImpulseMove(_moveRbParams, _rb));
+
+        _dashDic.Add(MoveMode.Transform, new TransformMove(_dashTrParams, transform));
+        _dashDic.Add(MoveMode.Rigidbody, new RigidVelocityImpulseMove(_dashRbParams, _rb));
      }
 
     private void Update()
     {
-        if(_isDash) Dash();
+        if (_isFixedUpdate) return;
+        if (_isDash) Dash();
         else Move();
     }
 
     private void FixedUpdate()
     {
-     //   if(_isDash) Dash();
-     //   else Move();
+        if (!_isFixedUpdate) return;
+        if(_isDash) Dash();
+        else Move();
     }
 
     private void OnEnable()
@@ -95,7 +107,7 @@ public class Player : MonoBehaviour
     private float _dashTimeWatcher = 0;
     private void Dash()
     {
-        _dashMove.Move(GetMoveDirection(_dashDirection));
+        _dashDic[_moveMode].Move(GetMoveDirection(_dashDirection));
         _dashTimeWatcher += Time.deltaTime;
         if(_dashTimeWatcher >= _dashTime)
         {
@@ -107,7 +119,7 @@ public class Player : MonoBehaviour
     private void Move(){
         Vector2 moveInput = GetInputMoveValueNomalize();
         Vector3 moveDirection = GetMoveDirection(moveInput);
-        _nomalMove.Move(moveDirection);
+        _moveDic[_moveMode].Move(moveDirection);
     }
 
 

@@ -38,6 +38,5 @@ public class RigidVelocityImpulseMove : IMove
     public class Params
     {
         public float MoveSpeed = 5f;
-        public float LimitSloapAngle = 50f;
     }
 }
